@@ -1,114 +1,92 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
+import React, {Component} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import Header from './Header';
+import Frisbee from 'frisbee';
+import Spinner from 'react-native-loading-spinner-overlay';
+import Form from 'react-native-form';
+import CountryPicker from 'react-native-country-picker-modal';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+export default class Main extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      enterCode: false,
+      spinner: false,
+      country: {
+        cca2: 'US',
+        callingCode: '1',
+      },
+    };
+  }
 
-const App: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
-};
+  render() {
+    return (
+      <View style={styles.container}>
+        <Header title="Main Header" />
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  countryPicker: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
+  container: {
+    flex: 1,
   },
-  body: {
-    backgroundColor: Colors.white,
+  header: {
+    textAlign: 'center',
+    marginTop: 60,
+    fontSize: 22,
+    margin: 20,
+    color: '#4A4A4A',
   },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  form: {
+    margin: 20,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
+  textInput: {
+    padding: 0,
+    margin: 0,
+    flex: 1,
+    fontSize: 20,
+    color: brandColor,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
+  button: {
+    marginTop: 20,
+    height: 50,
+    backgroundColor: brandColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
   },
-  highlight: {
-    fontWeight: '700',
+  buttonText: {
+    color: '#fff',
+    fontFamily: 'Helvetica',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
-  footer: {
-    color: Colors.dark,
+  wrongNumberText: {
+    margin: 10,
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  disclaimerText: {
+    marginTop: 30,
     fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+    color: 'grey',
+  },
+  callingCodeView: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  callingCodeText: {
+    fontSize: 20,
+    color: brandColor,
+    fontFamily: 'Helvetica',
+    fontWeight: 'bold',
+    paddingRight: 10,
   },
 });
-
-export default App;
