@@ -18,8 +18,11 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
 
+
+const API_HOST = 'http://192.168.0.172:3000';
+
 const api = new Frisbee({
-    baseURI: 'http://localhost:3000',
+    baseURI: 'http://localhost:3000/auth',
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -49,26 +52,60 @@ export default class PhoneVerification extends React.Component {
             code: '',
             phoneNumber: '',
         };
+
+        this._textInput = React.createRef();
+        this._countryPicker = React.createRef();
+        this._form = React.createRef();
     }
 
     _getCode = () => {
+        // Todo : check if valid number
 
         //this.setState({spinner: true});
-        console.log(
-            this._textInput._getText(),
-            this.state.country,
-        );
-        /*
-        setTimeout(async () => {
 
+        setTimeout(async () => {
             try {
 
-                const res = await api.post('/v1/verifications', {
+                let countryCode = this.state.country.callingCode;
+                let phoneNumber = this._textInput._lastNativeText;
+
+                await fetch(API_HOST + '/auth/send-code', {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        phoneNumber: phoneNumber,
+                        countryCode: countryCode,
+                    }),
+                }).then(
+                    (response) => {
+                        console.log('response status', response.status);
+                        if (response.status == 200) {
+                            console.log('responseJson', response);
+                            return response;
+                        } else if (response.status === 404) {
+                            console.log('404');
+                            throw 'Phone number doesn\'t exists';
+                        } else {
+                            throw 'Can(t reach the server.';
+                        }
+                    },
+                ).catch((error) => {
+                    console.log(error);
+                    throw 'Error server side';
+                });
+
+                console.log('code ..');
+                /*const res = await api.post('/send-code', {
                     body: {
-                        ...this._textInput.getValues(),
-                        ...this.state.country,
+                        phoneNumber: phoneNumber,
+                        countryCode: countryCode,
                     },
                 });
+
+                console.log(res);
 
                 if (res.err) {
                     throw res.err;
@@ -79,17 +116,19 @@ export default class PhoneVerification extends React.Component {
                     enterCode: true,
                     verification: res.body,
                 });
-                this.refs.form.refs.textInput.setNativeProps({text: ''});
+                */
+                this._textInput.setNativeProps({text: ''});
 
                 setTimeout(() => {
                     Alert.alert(Strings.Sent, Strings.CodeSent, [{
                         text: 'OK',
-                        onPress: () => this.refs.form.refs.textInput.focus(),
+                        onPress: () => this._textInput.focus(),
                     }]);
                 }, 100);
 
             } catch (err) {
-                // <https://github.com/niftylettuce/react-native-loading-spinner-overlay/issues/30#issuecomment-276845098>
+                console.log('Catch');
+                console.error(err);
                 this.setState({spinner: false});
                 setTimeout(() => {
                     Alert.alert('Oops!', err.message);
@@ -97,12 +136,13 @@ export default class PhoneVerification extends React.Component {
             }
 
         }, 100);
-         */
+
     };
 
     _verifyCode = () => {
 
-        this.setState({spinner: true});
+        //this.setState({spinner: true});
+
 
         setTimeout(async () => {
 
@@ -110,7 +150,7 @@ export default class PhoneVerification extends React.Component {
 
                 const res = await api.put('/v1/verifications', {
                     body: {
-                        ...this.refs.form.getValues(),
+                        ...this._form.getValues(),
                         ...this.state.country,
                     },
                 });
@@ -159,7 +199,7 @@ export default class PhoneVerification extends React.Component {
 
     _changeCountry = (country) => {
         this.setState({country});
-        this.refs.form.refs.textInput.focus();
+        this._textInput.focus();
     };
 
     _renderFooter = () => {
@@ -192,7 +232,9 @@ export default class PhoneVerification extends React.Component {
 
         return (
             <CountryPicker
-                ref={'countryPicker'}
+                ref={(countryPicker) => {
+                    this._countryPicker = countryPicker;
+                }}
                 closeable
                 style={styles.countryPicker}
                 onChange={this._changeCountry}
@@ -240,7 +282,7 @@ export default class PhoneVerification extends React.Component {
 
                 <Text style={styles.header}>{headerText}</Text>
 
-                <Form ref={'form'} style={styles.form}>
+                <Form ref={component => this._form = component} style={styles.form}>
 
                     <View style={{flexDirection: 'row'}}>
 
@@ -255,7 +297,7 @@ export default class PhoneVerification extends React.Component {
                             autoCapitalize={'none'}
                             autoCorrect={false}
                             onChangeText={this._onChangeText}
-                            placeholder={this.state.enterCode ? '_ _ _ _ _ _' : 'Phone Number'}
+                            placeholder={this.state.enterCode ? '_ _ _ _ _ _' : Strings.PhoneNumber}
                             keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
                             style={[styles.textInput, textStyle]}
                             returnKeyType='go'

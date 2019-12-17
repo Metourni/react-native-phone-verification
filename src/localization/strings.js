@@ -9,8 +9,8 @@ const Strings = new LocalizedStrings({
         WhatIsYourVerificationCode :"What's your verification code",
         WhatIsYourPhoneNumber :"What's your phone number",
 
-        VerificationCode: 'verification code',
-        PhoneNumber: 'phone number',
+        VerificationCode: 'Verification code',
+        PhoneNumber: 'Phone number',
 
         SendConfirmationCode: 'Send confirmation code',
         VerifyConfirmationCode: 'Verify confirmation code',
@@ -31,8 +31,11 @@ const Strings = new LocalizedStrings({
         //Header
         Home: 'Accueil',
 
-        VerificationCode: 'code de vérification',
-        PhoneNumber: 'numéro de téléphone',
+        WhatIsYourVerificationCode :"Quel est votre code de vérification",
+        WhatIsYourPhoneNumber :"Quel est votre numéro de téléphone",
+
+        VerificationCode: 'Code de vérification',
+        PhoneNumber: 'Numéro de téléphone',
 
         SendConfirmationCode: 'Envoyer le code de confirmation',
         VerifyConfirmationCode: 'Vérifier le code de confirmation',
