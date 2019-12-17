@@ -158,6 +158,8 @@ export default class PhoneVerification extends React.Component {
                 this.setState({spinner: false});
                 setTimeout(() => {
                     Alert.alert(Strings.Success, Strings.SuccessfullyVerifiedPhoneNumber);
+                    this.props.navigation.navigate('Home');
+
                 }, 100);
 
             } catch (err) {
