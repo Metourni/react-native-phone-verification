@@ -19,15 +19,13 @@ import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
 
 
-const API_HOST = 'http://192.168.0.172:3000';
-
-const api = new Frisbee({
-    baseURI: 'http://localhost:3000/auth',
+const API = {
+    baseURI: 'http://192.168.43.178:3000',
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
     },
-});
+};
 
 const MAX_LENGTH_CODE = 6;
 const MAX_LENGTH_NUMBER = 20;
@@ -61,62 +59,43 @@ export default class PhoneVerification extends React.Component {
     _getCode = () => {
         // Todo : check if valid number
 
-        //this.setState({spinner: true});
+        this.setState({spinner: true});
 
         setTimeout(async () => {
             try {
 
                 let countryCode = this.state.country.callingCode;
                 let phoneNumber = this._textInput._lastNativeText;
+                let code = 0;
 
-                await fetch(API_HOST + '/auth/send-code', {
+                await fetch(API.baseURI + '/auth/send-code', {
                     method: 'POST',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
+                    headers: API.headers,
                     body: JSON.stringify({
                         phoneNumber: phoneNumber,
                         countryCode: countryCode,
                     }),
                 }).then(
                     (response) => {
-                        console.log('response status', response.status);
-                        if (response.status == 200) {
-                            console.log('responseJson', response);
-                            return response;
+                        if (response.status === 201) {
+                            return response.json();
                         } else if (response.status === 404) {
-                            console.log('404');
                             throw 'Phone number doesn\'t exists';
                         } else {
                             throw 'Can(t reach the server.';
                         }
                     },
-                ).catch((error) => {
-                    console.log(error);
-                    throw 'Error server side';
+                ).then((responseJson) => {
+                    code = responseJson.sent;
                 });
-
-                console.log('code ..');
-                /*const res = await api.post('/send-code', {
-                    body: {
-                        phoneNumber: phoneNumber,
-                        countryCode: countryCode,
-                    },
-                });
-
-                console.log(res);
-
-                if (res.err) {
-                    throw res.err;
-                }
 
                 this.setState({
                     spinner: false,
                     enterCode: true,
-                    verification: res.body,
+                    verification: code,
+                    phoneNumber: phoneNumber,
                 });
-                */
+
                 this._textInput.setNativeProps({text: ''});
 
                 setTimeout(() => {
@@ -127,11 +106,9 @@ export default class PhoneVerification extends React.Component {
                 }, 100);
 
             } catch (err) {
-                console.log('Catch');
-                console.error(err);
                 this.setState({spinner: false});
                 setTimeout(() => {
-                    Alert.alert('Oops!', err.message);
+                    Alert.alert('Oops!', err);
                 }, 100);
             }
 
@@ -141,33 +118,49 @@ export default class PhoneVerification extends React.Component {
 
     _verifyCode = () => {
 
-        //this.setState({spinner: true});
-
+        this.setState({spinner: true});
 
         setTimeout(async () => {
 
             try {
 
-                const res = await api.put('/v1/verifications', {
-                    body: {
-                        ...this._form.getValues(),
-                        ...this.state.country,
+                let countryCode = this.state.country.callingCode;
+                let phoneNumber = this.state.phoneNumber;
+                let code = this._textInput._lastNativeText;
+
+                await fetch(API.baseURI + '/auth/verify-code', {
+                    method: 'POST',
+                    headers: API.headers,
+                    body: JSON.stringify({
+                        phoneNumber: phoneNumber,
+                        countryCode: countryCode,
+                        code: code,
+                    }),
+                }).then(
+                    (response) => {
+                        if (response.status === 201) {
+                            return response.json();
+                        } else if (response.status === 404) {
+                            throw 'Phone number doesn\'t exists';
+                        } else {
+                            throw 'Can(t reach the server.';
+                        }
                     },
+                ).then((responseJson) => {
+                    if (responseJson.verified) {
+                        console.log('Phone verified.');
+                    } else {
+                        throw 'Can\'t reach the server.';
+                    }
                 });
 
-                if (res.err) {
-                    throw res.err;
-                }
-
-                this.refs.form.refs.textInput.blur();
-                // <https://github.com/niftylettuce/react-native-loading-spinner-overlay/issues/30#issuecomment-276845098>
+                this._textInput.blur();
                 this.setState({spinner: false});
                 setTimeout(() => {
                     Alert.alert(Strings.Success, Strings.SuccessfullyVerifiedPhoneNumber);
                 }, 100);
 
             } catch (err) {
-                // <https://github.com/niftylettuce/react-native-loading-spinner-overlay/issues/30#issuecomment-276845098>
                 this.setState({spinner: false});
                 setTimeout(() => {
                     Alert.alert('Oops!', err.message);
