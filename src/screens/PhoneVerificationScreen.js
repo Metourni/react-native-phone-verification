@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 
 import {
     StyleSheet,
@@ -13,22 +13,21 @@ import {
 import {Colors} from '../styles';
 import Strings from '../localization/strings';
 
-import Frisbee from 'frisbee';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
 
-
 const API = {
-    baseURI: 'http://192.168.43.178:3000',
+    baseURI: 'http://192.168.0.172:3000',
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
     },
+    timeout: 1000 * 2,
 };
 
 const MAX_LENGTH_CODE = 6;
-const MAX_LENGTH_NUMBER = 20;
+const MAX_LENGTH_NUMBER = 10;
 
 // if you want to customize the country picker
 const countryPickerCustomStyles = {};
@@ -52,8 +51,6 @@ export default class PhoneVerification extends React.Component {
         };
 
         this._textInput = React.createRef();
-        this._countryPicker = React.createRef();
-        this._form = React.createRef();
     }
 
     _getCode = () => {
@@ -66,7 +63,7 @@ export default class PhoneVerification extends React.Component {
 
                 let countryCode = this.state.country.callingCode;
                 let phoneNumber = this._textInput._lastNativeText;
-                let code = 0;
+                let sent = false;
 
                 await fetch(API.baseURI + '/auth/send-code', {
                     method: 'POST',
@@ -82,17 +79,25 @@ export default class PhoneVerification extends React.Component {
                         } else if (response.status === 404) {
                             throw 'Phone number doesn\'t exists';
                         } else {
-                            throw 'Can(t reach the server.';
+                            throw 'Can\'t reach the server.';
                         }
                     },
                 ).then((responseJson) => {
-                    code = responseJson.sent;
+                    if (responseJson && responseJson.sent) {
+                        sent = responseJson.sent;
+                    } else {
+                        throw 'Can\'t send code.';
+                    }
+                }).catch(error => {
+                    console.log('Catch error : ', error);
+                    throw 'Can\'t connect to the server';
                 });
+
 
                 this.setState({
                     spinner: false,
                     enterCode: true,
-                    verification: code,
+                    verification: sent,
                     phoneNumber: phoneNumber,
                 });
 
@@ -147,11 +152,14 @@ export default class PhoneVerification extends React.Component {
                         }
                     },
                 ).then((responseJson) => {
-                    if (responseJson.verified) {
+                    if (responseJson && responseJson.verified) {
                         console.log('Phone verified.');
                     } else {
-                        throw 'Can\'t reach the server.';
+                        throw 'Can\'t check the code, try to resend it again.';
                     }
+                }).catch(error => {
+                    console.log('Catch error :', error);
+                    throw 'Can\'t connect to the server';
                 });
 
                 this._textInput.blur();
@@ -227,9 +235,6 @@ export default class PhoneVerification extends React.Component {
 
         return (
             <CountryPicker
-                ref={(countryPicker) => {
-                    this._countryPicker = countryPicker;
-                }}
                 closeable
                 style={styles.countryPicker}
                 onChange={this._changeCountry}
@@ -277,7 +282,7 @@ export default class PhoneVerification extends React.Component {
 
                 <Text style={styles.header}>{headerText}</Text>
 
-                <Form ref={component => this._form = component} style={styles.form}>
+                <Form style={styles.form}>
 
                     <View style={{flexDirection: 'row'}}>
 
@@ -299,7 +304,7 @@ export default class PhoneVerification extends React.Component {
                             autoFocus
                             placeholderTextColor={brandColor}
                             selectionColor={brandColor}
-                            maxLength={this.state.enterCode ? 6 : 20}
+                            maxLength={this.state.enterCode ? MAX_LENGTH_CODE : MAX_LENGTH_NUMBER}
                             onSubmitEditing={this._getSubmitAction}/>
 
                     </View>
