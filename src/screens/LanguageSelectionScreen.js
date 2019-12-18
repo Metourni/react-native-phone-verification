@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import Strings from '../localization/strings';
+import {Colors} from '../styles';
 
 class LanguageSelect extends React.Component {
 
@@ -56,7 +57,7 @@ class LanguageSelect extends React.Component {
 const styles = StyleSheet.create({
     MainContainer: {
         flex: 1,
-        backgroundColor: '#ECEFF1',
+        backgroundColor: Colors.BG_PRIMARY_COLOR,
         alignItems: 'center',
     },
     textHeading: {

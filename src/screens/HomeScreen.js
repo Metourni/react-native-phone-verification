@@ -8,9 +8,10 @@ import {
 } from 'react-native';
 
 import Strings from '../localization/strings';
+import {Colors} from '../styles';
 
 class HomeScreen extends React.Component {
-    
+
     static navigationOptions = ({navigation}) => {
         return {
             headerTitle: Strings.HomeHeader,
@@ -52,7 +53,7 @@ class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ECEFF1',
+        backgroundColor: Colors.BG_PRIMARY_COLOR,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',

@@ -10,20 +10,20 @@ import {
     Alert,
 } from 'react-native';
 
-import {Colors} from '../styles';
-import Strings from '../localization/strings';
-
 import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
 
+import {Colors} from '../styles';
+import * as Config from '../config';
+import Strings from '../localization/strings';
+
 const API = {
-    baseURI: 'http://192.168.0.172:3000',
+    baseURI: Config.Api.BASE_URL,
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
     },
-    timeout: 1000 * 2,
 };
 
 const MAX_LENGTH_CODE = 6;
@@ -31,9 +31,6 @@ const MAX_LENGTH_NUMBER = 10;
 
 // if you want to customize the country picker
 const countryPickerCustomStyles = {};
-
-// your brand's theme primary color
-const brandColor = Colors.PRIMARY;
 
 export default class PhoneVerification extends React.Component {
 
@@ -83,20 +80,20 @@ export default class PhoneVerification extends React.Component {
                         if (response.status === 201) {
                             return response.json();
                         } else if (response.status === 404) {
-                            throw 'Phone number doesn\'t exists';
+                            throw Error('Phone number doesn\'t exists');
                         } else {
-                            throw 'Can\'t reach the server.';
+                            throw Error('Can\'t reach the server.');
                         }
                     },
                 ).then((responseJson) => {
                     if (responseJson && responseJson.sent) {
                         sent = responseJson.sent;
                     } else {
-                        throw 'Can\'t send code.';
+                        throw Error('Can\'t send code.');
                     }
                 }).catch(error => {
                     console.log('Catch error : ', error);
-                    throw 'Can\'t connect to the server';
+                    throw error;
                 });
 
 
@@ -116,10 +113,10 @@ export default class PhoneVerification extends React.Component {
                     }]);
                 }, 100);
 
-            } catch (err) {
+            } catch (error) {
                 this.setState({spinner: false});
                 setTimeout(() => {
-                    Alert.alert('Oops!', err);
+                    Alert.alert('Oops!', error.message);
                 }, 100);
             }
 
@@ -152,20 +149,20 @@ export default class PhoneVerification extends React.Component {
                         if (response.status === 201) {
                             return response.json();
                         } else if (response.status === 404) {
-                            throw 'Phone number doesn\'t exists';
+                            throw Error('Wrong code');
                         } else {
-                            throw 'Can(t reach the server.';
+                            throw Error('Can\'t reach the server.');
                         }
                     },
                 ).then((responseJson) => {
                     if (responseJson && responseJson.verified) {
                         console.log('Phone verified.');
                     } else {
-                        throw 'Can\'t check the code, try to resend it again.';
+                        throw Error('Can\'t check the code, try to resend it again.');
                     }
                 }).catch(error => {
                     console.log('Catch error :', error);
-                    throw 'Can\'t connect to the server';
+                    throw error;
                 });
 
                 this._textInput.blur();
@@ -176,10 +173,10 @@ export default class PhoneVerification extends React.Component {
 
                 }, 100);
 
-            } catch (err) {
+            } catch (error) {
                 this.setState({spinner: false});
                 setTimeout(() => {
-                    Alert.alert('Oops!', err.message);
+                    Alert.alert('Oops!', error.message);
                 }, 100);
             }
 
@@ -308,8 +305,8 @@ export default class PhoneVerification extends React.Component {
                             style={[styles.textInput, textStyle]}
                             returnKeyType='go'
                             autoFocus
-                            placeholderTextColor={brandColor}
-                            selectionColor={brandColor}
+                            placeholderTextColor={Colors.PRIMARY}
+                            selectionColor={Colors.PRIMARY}
                             maxLength={this.state.enterCode ? MAX_LENGTH_CODE : MAX_LENGTH_NUMBER}
                             onSubmitEditing={this._getSubmitAction}/>
 
@@ -335,13 +332,13 @@ export default class PhoneVerification extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: Colors.BG_PRIMARY_COLOR,
+    },
     countryPicker: {
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    container: {
-        flex: 1,
-        backgroundColor: '#ECEFF1',
     },
     header: {
         textAlign: 'center',
@@ -358,12 +355,12 @@ const styles = StyleSheet.create({
         margin: 0,
         flex: 1,
         fontSize: 20,
-        color: brandColor,
+        color: Colors.PRIMARY,
     },
     button: {
         marginTop: 20,
         height: 50,
-        backgroundColor: brandColor,
+        backgroundColor: Colors.PRIMARY,
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 5,
@@ -390,7 +387,7 @@ const styles = StyleSheet.create({
     },
     callingCodeText: {
         fontSize: 20,
-        color: brandColor,
+        color: Colors.PRIMARY,
         fontFamily: 'Helvetica',
         fontWeight: 'bold',
         paddingRight: 10,
