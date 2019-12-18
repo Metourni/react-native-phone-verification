@@ -26,7 +26,8 @@ React Native phone verification.
 3. Config the environment :
 
   ```bash
-  react-native init myproject
+  // In the file : src/config/api.js
+  export const BASE_URL = 'http://192.168.0.172:3000';
   ```
 
 3. Run the project:
