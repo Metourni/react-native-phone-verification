@@ -3,11 +3,13 @@ import LocalizedStrings from 'react-native-localization';
 
 const Strings = new LocalizedStrings({
     en: {
-        //Header
-        Home: 'Home',
+        // Header
+        HomeHeader: 'Home',
+        LanguageSelectionHeader: 'Select language',
+        PhoneVerificationHeader: 'Phone verification',
 
-        WhatIsYourVerificationCode :"What's your verification code",
-        WhatIsYourPhoneNumber :"What's your phone number",
+        WhatIsYourVerificationCode: 'What\'s your verification code',
+        WhatIsYourPhoneNumber: 'What\'s your phone number',
 
         VerificationCode: 'Verification code',
         PhoneNumber: 'Phone number',
@@ -25,14 +27,16 @@ const Strings = new LocalizedStrings({
         wrongNumber: 'Enter the wrong number or need a new code?',
 
         //Alerts
-        Success:"Success"
+        Success: 'Success',
     },
     fr: {
-        //Header
-        Home: 'Accueil',
+        // Header
+        HomeHeader: 'Accueil',
+        LanguageSelectionHeader: 'Choisir la langue',
+        PhoneVerificationHeader: 'Vérification de téléphone',
 
-        WhatIsYourVerificationCode :"Quel est votre code de vérification",
-        WhatIsYourPhoneNumber :"Quel est votre numéro de téléphone",
+        WhatIsYourVerificationCode: 'Quel est votre code de vérification',
+        WhatIsYourPhoneNumber: 'Quel est votre numéro de téléphone',
 
         VerificationCode: 'Code de vérification',
         PhoneNumber: 'Numéro de téléphone',
@@ -50,7 +54,7 @@ const Strings = new LocalizedStrings({
         wrongNumber: 'Saisissez le mauvais numéro ou avez besoin d\'un nouveau code?',
 
         //Alerts
-        Success:"Succès"
+        Success: 'Succès',
     },
     ar: {},
 });

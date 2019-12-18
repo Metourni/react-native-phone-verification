@@ -4,6 +4,12 @@ import Strings from '../localization/strings';
 
 class LanguageSelect extends React.Component {
 
+    static navigationOptions = ({navigation}) => {
+        return {
+            headerTitle: Strings.LanguageSelectionHeader,
+        };
+    };
+
     constructor(props) {
         super(props);
         global.lang = [
@@ -50,7 +56,7 @@ class LanguageSelect extends React.Component {
 const styles = StyleSheet.create({
     MainContainer: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: '#ECEFF1',
         alignItems: 'center',
     },
     textHeading: {

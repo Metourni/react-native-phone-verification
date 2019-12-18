@@ -37,6 +37,12 @@ const brandColor = Colors.PRIMARY;
 
 export default class PhoneVerification extends React.Component {
 
+    static navigationOptions = ({navigation}) => {
+        return {
+            headerTitle: Strings.PhoneVerificationHeader,
+        };
+    };
+
     constructor(props) {
         super(props);
         this.state = {
@@ -335,6 +341,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        backgroundColor: '#ECEFF1',
     },
     header: {
         textAlign: 'center',
