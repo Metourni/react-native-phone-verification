@@ -9,6 +9,18 @@ React Native phone verification.
 ## Perspectives
 * Validations.
 
+## Env
+
+  ```bash
+  node -v
+  v10.17.0
+ ```
+ 
+  ```bash
+ npm -v
+ 6.11.3
+ ```
+
 ## Setup 
 1. Clone the project:
 
